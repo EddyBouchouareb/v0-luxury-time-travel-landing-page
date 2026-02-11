@@ -61,17 +61,15 @@ const config: Config = {
           border: 'hsl(var(--sidebar-border))',
           ring: 'hsl(var(--sidebar-ring))',
         },
-      },
-      fontFamily: {
-        sans: ['var(--font-sans)', 'Inter', 'system-ui', 'sans-serif'],
-        serif: ['var(--font-serif)', 'Playfair Display', 'Georgia', 'serif'],
-      },
-      colors: {
         gold: {
           DEFAULT: 'hsl(var(--gold))',
           light: 'hsl(var(--gold-light))',
           dark: 'hsl(var(--gold-dark))',
         },
+      },
+      fontFamily: {
+        sans: ['var(--font-sans)', 'Inter', 'system-ui', 'sans-serif'],
+        serif: ['var(--font-serif)', 'Playfair Display', 'Georgia', 'serif'],
       },
       borderRadius: {
         lg: 'var(--radius)',
