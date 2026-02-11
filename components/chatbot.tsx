@@ -1,21 +1,13 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
-import { MessageCircle, X, Send } from "lucide-react"
+import { MessageCircle, X, Send, Loader2 } from "lucide-react"
 
 interface Message {
   id: number
   text: string
   sender: "bot" | "user"
 }
-
-const botResponses = [
-  "Our most popular journey is the Paris 1889 experience. Would you like to learn more?",
-  "Each journey includes private temporal suites, era-authentic dining, and a personal historian guide.",
-  "Safety is our highest priority. Our Chrono-Shield technology ensures complete timeline isolation.",
-  "I'd recommend starting with our 3-day Paris experience for first-time travelers. It's truly unforgettable.",
-  "Pricing varies by destination and duration. Our concierge team would be happy to arrange a private consultation.",
-]
 
 export function Chatbot() {
   const [open, setOpen] = useState(false)
@@ -27,33 +19,57 @@ export function Chatbot() {
     },
   ])
   const [input, setInput] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight
     }
-  }, [messages])
+  }, [messages, isLoading])
 
-  const handleSend = () => {
-    if (!input.trim()) return
+  const handleSend = async () => {
+    if (!input.trim() || isLoading) return
 
     const userMessage: Message = {
       id: Date.now(),
-      text: input,
+      text: input.trim(),
       sender: "user",
     }
     setMessages((prev) => [...prev, userMessage])
+    const userText = input.trim()
     setInput("")
+    setIsLoading(true)
 
-    setTimeout(() => {
-      const response =
-        botResponses[Math.floor(Math.random() * botResponses.length)]
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: userText }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to get response")
+      }
+
       setMessages((prev) => [
         ...prev,
-        { id: Date.now() + 1, text: response, sender: "bot" },
+        { id: Date.now() + 1, text: data.message, sender: "bot" },
       ])
-    }, 1000)
+    } catch {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now() + 1,
+          text: "I apologize for the inconvenience. Our temporal communication systems are experiencing a disruption. Please try again shortly.",
+          sender: "bot",
+        },
+      ])
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -66,7 +82,9 @@ export function Chatbot() {
                 <MessageCircle className="h-4 w-4 text-gold" />
               </div>
               <div>
-                <p className="text-sm font-medium text-foreground">Chronos Assistant</p>
+                <p className="text-sm font-medium text-foreground">
+                  Chronos Assistant
+                </p>
                 <p className="text-[10px] tracking-wider text-gold">Online</p>
               </div>
             </div>
@@ -80,7 +98,10 @@ export function Chatbot() {
             </button>
           </div>
 
-          <div ref={scrollRef} className="flex flex-col gap-3 p-4 h-[320px] overflow-y-auto">
+          <div
+            ref={scrollRef}
+            className="flex flex-col gap-3 p-4 h-[320px] overflow-y-auto"
+          >
             {messages.map((msg) => (
               <div
                 key={msg.id}
@@ -93,6 +114,14 @@ export function Chatbot() {
                 {msg.text}
               </div>
             ))}
+            {isLoading && (
+              <div className="self-start flex items-center gap-2 rounded-2xl rounded-bl-md bg-secondary px-4 py-3">
+                <Loader2 className="h-4 w-4 animate-spin text-gold" />
+                <span className="text-xs text-muted-foreground">
+                  Composing response...
+                </span>
+              </div>
+            )}
           </div>
 
           <div className="border-t border-border p-3">
@@ -108,14 +137,20 @@ export function Chatbot() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Ask about your journey..."
-                className="flex-1 rounded-xl border border-border bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-gold/50 focus:outline-none focus:ring-1 focus:ring-gold/30"
+                disabled={isLoading}
+                className="flex-1 rounded-xl border border-border bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-gold/50 focus:outline-none focus:ring-1 focus:ring-gold/30 disabled:opacity-50"
               />
               <button
                 type="submit"
-                className="flex h-10 w-10 items-center justify-center rounded-xl bg-gold text-background transition-all duration-200 hover:scale-105 hover:shadow-[0_0_20px_rgba(201,168,76,0.3)]"
+                disabled={isLoading || !input.trim()}
+                className="flex h-10 w-10 items-center justify-center rounded-xl bg-gold text-background transition-all duration-200 hover:scale-105 hover:shadow-[0_0_20px_rgba(201,168,76,0.3)] disabled:opacity-50 disabled:hover:scale-100"
                 aria-label="Send message"
               >
-                <Send className="h-4 w-4" />
+                {isLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Send className="h-4 w-4" />
+                )}
               </button>
             </form>
           </div>
