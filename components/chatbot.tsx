@@ -14,7 +14,7 @@ export function Chatbot() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 0,
-      text: "Bienvenue chez Chronos Voyages. Comment puis-je vous accompagner dans votre voyage temporel ?",
+      text: "Bienvenue chez Chronos. Comment puis-je vous aider ?",
       sender: "bot",
     },
   ])
@@ -47,13 +47,8 @@ export function Chatbot() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: userText }),
       })
-
       const data = await res.json()
-
-      if (!res.ok) {
-        throw new Error(data.error || "Erreur")
-      }
-
+      if (!res.ok) throw new Error(data.error || "Erreur")
       setMessages((prev) => [
         ...prev,
         { id: Date.now() + 1, text: data.message, sender: "bot" },
@@ -63,7 +58,7 @@ export function Chatbot() {
         ...prev,
         {
           id: Date.now() + 1,
-          text: "Veuillez nous excuser, nos systemes de communication temporels rencontrent une perturbation. Reessayez dans un instant.",
+          text: "Nos systemes rencontrent une perturbation temporelle. Reessayez dans un instant.",
           sender: "bot",
         },
       ])
@@ -75,15 +70,11 @@ export function Chatbot() {
   return (
     <div className="fixed bottom-6 right-6 z-50">
       {open && (
-        <div className="absolute bottom-16 right-0 w-[320px] sm:w-[360px] overflow-hidden rounded-xl border border-border bg-background shadow-2xl shadow-foreground/5 animate-fade-in-up">
-          <div className="flex items-center justify-between border-b border-border px-5 py-4">
+        <div className="absolute bottom-14 right-0 w-[300px] sm:w-[340px] overflow-hidden rounded-xl border border-border bg-background shadow-xl animate-fade-in-up">
+          <div className="flex items-center justify-between border-b border-border px-4 py-3">
             <div>
-              <p className="text-sm font-medium text-foreground">
-                Chronos
-              </p>
-              <p className="text-[10px] tracking-wider text-primary">
-                En ligne
-              </p>
+              <p className="text-sm font-medium text-foreground">Chronos</p>
+              <p className="text-[10px] tracking-wider text-primary">En ligne</p>
             </div>
             <button
               type="button"
@@ -95,14 +86,11 @@ export function Chatbot() {
             </button>
           </div>
 
-          <div
-            ref={scrollRef}
-            className="flex flex-col gap-3 p-4 h-[300px] overflow-y-auto"
-          >
+          <div ref={scrollRef} className="flex flex-col gap-2.5 p-4 h-[280px] overflow-y-auto">
             {messages.map((msg) => (
               <div
                 key={msg.id}
-                className={`max-w-[82%] rounded-xl px-4 py-2.5 text-[13px] leading-relaxed ${
+                className={`max-w-[80%] rounded-lg px-3.5 py-2 text-[13px] leading-relaxed ${
                   msg.sender === "bot"
                     ? "self-start bg-card text-foreground"
                     : "self-end bg-primary text-primary-foreground"
@@ -112,10 +100,10 @@ export function Chatbot() {
               </div>
             ))}
             {isLoading && (
-              <div className="self-start flex items-center gap-2 rounded-xl bg-card px-4 py-3">
-                <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
+              <div className="self-start flex items-center gap-2 rounded-lg bg-card px-3.5 py-2.5">
+                <Loader2 className="h-3 w-3 animate-spin text-primary" />
                 <span className="text-[11px] text-muted-foreground">
-                  Redaction en cours...
+                  Redaction...
                 </span>
               </div>
             )}
@@ -133,20 +121,20 @@ export function Chatbot() {
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Posez votre question..."
+                placeholder="Votre question..."
                 disabled={isLoading}
-                className="flex-1 rounded-lg border border-border bg-card px-4 py-2.5 text-[13px] text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none disabled:opacity-50"
+                className="flex-1 rounded-lg border border-border bg-card px-3.5 py-2 text-[13px] text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none disabled:opacity-50"
               />
               <button
                 type="submit"
                 disabled={isLoading || !input.trim()}
-                className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground transition-opacity duration-200 disabled:opacity-40"
+                className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground transition-opacity duration-200 disabled:opacity-40"
                 aria-label="Envoyer"
               >
                 {isLoading ? (
-                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  <Loader2 className="h-3 w-3 animate-spin" />
                 ) : (
-                  <Send className="h-3.5 w-3.5" />
+                  <Send className="h-3 w-3" />
                 )}
               </button>
             </form>
@@ -157,7 +145,7 @@ export function Chatbot() {
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="flex h-12 w-12 items-center justify-center rounded-full border border-border bg-background text-primary shadow-lg transition-all duration-300 hover:border-primary/40 animate-pulse-glow"
+        className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-background text-primary shadow-lg transition-all duration-300 hover:border-primary/40 animate-pulse-glow"
         aria-label={open ? "Fermer le chat" : "Ouvrir le chat"}
       >
         {open ? (

@@ -6,6 +6,7 @@ import { useTheme } from "next-themes"
 
 const navLinks = [
   { label: "Destinations", href: "#destinations" },
+  { label: "Quiz", href: "#quiz" },
   { label: "Contact", href: "#contact" },
 ]
 
@@ -27,16 +28,16 @@ export function Header() {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled
-          ? "bg-background/80 backdrop-blur-xl border-b border-border"
+          ? "bg-background/90 backdrop-blur-xl border-b border-border"
           : "bg-transparent"
       }`}
     >
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
-        <a href="#" className="font-serif text-lg tracking-wide text-foreground">
+      <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-5">
+        <a href="#" className="font-serif text-xl tracking-wide text-foreground">
           Chronos
         </a>
 
-        <nav className="hidden items-center gap-10 md:flex" aria-label="Navigation principale">
+        <nav className="hidden items-center gap-8 md:flex" aria-label="Navigation principale">
           {navLinks.map((link) => (
             <a
               key={link.label}
@@ -51,8 +52,8 @@ export function Header() {
             <button
               type="button"
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition-colors duration-300 hover:text-foreground"
-              aria-label="Changer de theme"
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted-foreground transition-all duration-300 hover:text-foreground hover:border-foreground/30"
+              aria-label="Changer le theme"
             >
               {theme === "dark" ? (
                 <Sun className="h-4 w-4" />
@@ -61,13 +62,6 @@ export function Header() {
               )}
             </button>
           )}
-
-          <a
-            href="#destinations"
-            className="inline-flex items-center rounded-full border border-foreground/20 px-5 py-2 text-[12px] font-medium tracking-widest uppercase text-foreground transition-all duration-300 hover:border-primary hover:text-primary"
-          >
-            Reserver
-          </a>
         </nav>
 
         <div className="flex items-center gap-3 md:hidden">
@@ -75,8 +69,8 @@ export function Header() {
             <button
               type="button"
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="flex h-8 w-8 items-center justify-center text-muted-foreground"
-              aria-label="Changer de theme"
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted-foreground"
+              aria-label="Changer le theme"
             >
               {theme === "dark" ? (
                 <Sun className="h-4 w-4" />
@@ -110,13 +104,6 @@ export function Header() {
                 {link.label}
               </a>
             ))}
-            <a
-              href="#destinations"
-              onClick={() => setMobileOpen(false)}
-              className="mt-2 inline-flex items-center justify-center rounded-full border border-foreground/20 px-5 py-3 text-[12px] font-medium tracking-widest uppercase text-foreground"
-            >
-              Reserver
-            </a>
           </nav>
         </div>
       )}
