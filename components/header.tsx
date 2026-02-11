@@ -1,18 +1,21 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Menu, X } from "lucide-react"
+import { Menu, X, Sun, Moon } from "lucide-react"
+import { useTheme } from "next-themes"
 
 const navLinks = [
   { label: "Destinations", href: "#destinations" },
-  { label: "About", href: "#about" },
-  { label: "Experience", href: "#experience" },
   { label: "Contact", href: "#contact" },
 ]
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => setMounted(true), [])
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50)
@@ -24,70 +27,85 @@ export function Header() {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled
-          ? "bg-background/90 backdrop-blur-xl border-b border-border"
+          ? "bg-background/80 backdrop-blur-xl border-b border-border"
           : "bg-transparent"
       }`}
     >
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
-        <a href="#" className="flex items-center gap-3 group">
-          <div className="relative flex h-10 w-10 items-center justify-center rounded-full border border-gold/40 transition-all duration-300 group-hover:border-gold group-hover:shadow-[0_0_20px_rgba(201,168,76,0.2)]">
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              className="text-gold"
-            >
-              <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" />
-              <path d="M12 6V12L15 15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-            </svg>
-          </div>
-          <span className="font-serif text-xl tracking-wide text-foreground">
-            Chronos
-          </span>
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
+        <a href="#" className="font-serif text-lg tracking-wide text-foreground">
+          Chronos
         </a>
 
-        <nav className="hidden items-center gap-8 md:flex" aria-label="Main navigation">
+        <nav className="hidden items-center gap-10 md:flex" aria-label="Navigation principale">
           {navLinks.map((link) => (
             <a
               key={link.label}
               href={link.href}
-              className="relative text-sm tracking-widest uppercase text-muted-foreground transition-colors duration-300 hover:text-gold after:absolute after:bottom-[-4px] after:left-0 after:h-px after:w-0 after:bg-gold after:transition-all after:duration-300 hover:after:w-full"
+              className="text-[13px] tracking-widest uppercase text-muted-foreground transition-colors duration-300 hover:text-foreground"
             >
               {link.label}
             </a>
           ))}
-        </nav>
 
-        <div className="hidden md:block">
+          {mounted && (
+            <button
+              type="button"
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition-colors duration-300 hover:text-foreground"
+              aria-label="Changer de theme"
+            >
+              {theme === "dark" ? (
+                <Sun className="h-4 w-4" />
+              ) : (
+                <Moon className="h-4 w-4" />
+              )}
+            </button>
+          )}
+
           <a
             href="#destinations"
-            className="inline-flex items-center gap-2 rounded-full border border-gold/50 bg-gold/10 px-6 py-2.5 text-sm font-medium tracking-wider uppercase text-gold transition-all duration-300 hover:bg-gold hover:text-background hover:shadow-[0_0_30px_rgba(201,168,76,0.25)]"
+            className="inline-flex items-center rounded-full border border-foreground/20 px-5 py-2 text-[12px] font-medium tracking-widest uppercase text-foreground transition-all duration-300 hover:border-primary hover:text-primary"
           >
-            Book a Journey
+            Reserver
           </a>
-        </div>
+        </nav>
 
-        <button
-          type="button"
-          className="text-foreground md:hidden"
-          onClick={() => setMobileOpen(!mobileOpen)}
-          aria-label={mobileOpen ? "Close menu" : "Open menu"}
-          aria-expanded={mobileOpen}
-        >
-          {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-        </button>
+        <div className="flex items-center gap-3 md:hidden">
+          {mounted && (
+            <button
+              type="button"
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="flex h-8 w-8 items-center justify-center text-muted-foreground"
+              aria-label="Changer de theme"
+            >
+              {theme === "dark" ? (
+                <Sun className="h-4 w-4" />
+              ) : (
+                <Moon className="h-4 w-4" />
+              )}
+            </button>
+          )}
+          <button
+            type="button"
+            className="text-foreground"
+            onClick={() => setMobileOpen(!mobileOpen)}
+            aria-label={mobileOpen ? "Fermer le menu" : "Ouvrir le menu"}
+            aria-expanded={mobileOpen}
+          >
+            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </div>
       </div>
 
       {mobileOpen && (
         <div className="border-t border-border bg-background/95 backdrop-blur-xl md:hidden">
-          <nav className="flex flex-col px-6 py-6 gap-4" aria-label="Mobile navigation">
+          <nav className="flex flex-col px-6 py-6 gap-5" aria-label="Navigation mobile">
             {navLinks.map((link) => (
               <a
                 key={link.label}
                 href={link.href}
                 onClick={() => setMobileOpen(false)}
-                className="text-sm tracking-widest uppercase text-muted-foreground transition-colors duration-300 hover:text-gold py-2"
+                className="text-[13px] tracking-widest uppercase text-muted-foreground transition-colors duration-300 hover:text-foreground"
               >
                 {link.label}
               </a>
@@ -95,9 +113,9 @@ export function Header() {
             <a
               href="#destinations"
               onClick={() => setMobileOpen(false)}
-              className="mt-2 inline-flex items-center justify-center rounded-full border border-gold/50 bg-gold/10 px-6 py-3 text-sm font-medium tracking-wider uppercase text-gold transition-all duration-300 hover:bg-gold hover:text-background"
+              className="mt-2 inline-flex items-center justify-center rounded-full border border-foreground/20 px-5 py-3 text-[12px] font-medium tracking-widest uppercase text-foreground"
             >
-              Book a Journey
+              Reserver
             </a>
           </nav>
         </div>

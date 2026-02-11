@@ -1,27 +1,28 @@
 import React from "react"
-import type { Metadata, Viewport } from 'next'
-import { Playfair_Display, Inter } from 'next/font/google'
+import type { Metadata, Viewport } from "next"
+import { Playfair_Display, Inter } from "next/font/google"
+import { ThemeProvider } from "@/components/theme-provider"
 
-import './globals.css'
+import "./globals.css"
 
 const playfair = Playfair_Display({
-  subsets: ['latin'],
-  variable: '--font-serif',
+  subsets: ["latin"],
+  variable: "--font-serif",
 })
 
 const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-sans',
+  subsets: ["latin"],
+  variable: "--font-sans",
 })
 
 export const metadata: Metadata = {
-  title: 'Chronos Voyages | Luxury Time Travel Agency',
+  title: "Chronos Voyages | Agence de Voyage Temporel",
   description:
-    'Experience history firsthand. The world\'s most exclusive time travel agency offering curated journeys through the ages.',
+    "Vivez l'histoire en personne. L'agence de voyage temporel la plus exclusive au monde.",
 }
 
 export const viewport: Viewport = {
-  themeColor: '#0d0f14',
+  themeColor: "#0d0f14",
 }
 
 export default function RootLayout({
@@ -30,8 +31,21 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${playfair.variable} ${inter.variable}`}>
-      <body className="font-sans antialiased">{children}</body>
+    <html
+      lang="fr"
+      className={`${playfair.variable} ${inter.variable}`}
+      suppressHydrationWarning
+    >
+      <body className="font-sans antialiased">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem={false}
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   )
 }
